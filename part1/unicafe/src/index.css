@@ -1,22 +1,7 @@
-table {
+table,
+td {
   border: 1px solid black;
   text-align: center;
-}
-
-tr {
-  border: 1px solid black;
-}
-
-td {
+  border-collapse: collapse;
   padding: 10px;
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-}
-
-tr > td:last-child {
-  border-right: none;
-}
-
-table > tr:last-child > td {
-  border-bottom: none;
 }
