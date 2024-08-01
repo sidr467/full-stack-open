@@ -29,6 +29,8 @@ const App = () => {
     setVote(newVotes)
   }
 
+    
+
   return (
     <>
       <Anecdote vote={vote} anecdotes={anecdotes} selected={selected} />
