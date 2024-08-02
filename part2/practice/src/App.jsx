@@ -1,61 +1,47 @@
-const Header = (props) => {
-  return <h1>{props.course}</h1>
-}
+import { useState } from "react"
+import Note from "./Components/Note"
 
-const Part = (props) => {
-  return (
-    <p>
-      {props.part} {props.exercises}
-    </p>
-  )
-}
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes)
+  const [newNote, setNewNote] = useState("")
+  const [showAll, setShowAll] = useState(true)
 
-const Content = (props) => {
-  return (
-    <>
-      <Part part={props.parts[0].part1} exercises={props.parts[0].exercises1} />
-      <Part part={props.parts[1].part2} exercises={props.parts[1].exercises2} />
-      <Part part={props.parts[2].part3} exercises={props.parts[2].exercises3} />
-    </>
-  )
-}
+  const addNote = (e) => {
+    e.preventDefault()
+    const noteObject = {
+      content: newNote,
+      important: Math.random() < 0.5,
+      id: String(notes.length + 1),
+    }
 
-const Total = (props) => {
-  return (
-    <p>
-      Number of exercises{" "}
-      {props.parts[0].exercises1 +
-        props.parts[1].exercises2 +
-        props.parts[2].exercises3}
-    </p>
-  )
-}
+    setNotes(notes.concat(noteObject))
+    setNewNote("")
+  }
 
-function App() {
-  const course = {
-    name: "Half Stack application development",
+  const notesToShow = showAll
+    ? notes
+    : notes.filter((note) => note.important === true)
 
-    parts: [
-      {
-        part1: "Fundamentals of React",
-        exercises1: 10,
-      },
-      {
-        part2: "Fundamentals of JS",
-        exercises2: 7,
-      },
-      {
-        part3: "Fundamentals of Next",
-        exercises3: 14,
-      },
-    ],
+  const handleNoteChange = (e) => {
+    console.log(e.target.value)
+    setNewNote(e.target.value)
   }
 
   return (
     <div>
-      <Header course={course.name}></Header>
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      <h1>Notes</h1>
+      <button onClick={() => setShowAll(!showAll)}>
+        show {showAll ? 'important' : 'all'}
+      </button>
+      <ul>
+        {notesToShow.map((note) => (
+          <Note key={note.id} note={note} />
+        ))}
+      </ul>
+      <form action="" onSubmit={addNote}>
+        <input type="text" value={newNote} onChange={handleNoteChange} />
+        <button type="submit">Save</button>
+      </form>
     </div>
   )
 }
