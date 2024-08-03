@@ -1,64 +1,85 @@
-import { useState, useEffect } from "react"
-import Filter from "./components/Filter"
-import AddName from "./components/AddName"
-import Number from "./components/Number"
-import axios from "axios"
+import { useState, useEffect } from "react";
+import Filter from "./components/Filter";
+import AddName from "./components/AddName";
+import Number from "./components/Number";
+import personService from "./services/persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState("")
-  const [newNumber, setNewNumber] = useState("")
-  const [filter, setFilter] = useState("")
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data)
-    })
-  },[])
+    personService.getAllPersons().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   const handleAdding = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    let nameExist = persons.some((person) => person.name === newName)
-    let numberExist = persons.some((person) => person.number === newNumber)
+    const existingPerson = persons.find((person) => person.name === newName);
 
-    if (nameExist) {
-      alert(`${newName} is already added to the phonebook`)
-      setNewName("")
-      return
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already added to the phonebook, replace the old number with new number?`
+        )
+      ) {
+        const updatedPerson = { ...existingPerson, number: newNumber };
+        personService
+          .updatePerson(existingPerson.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== existingPerson.id ? person : returnedPerson
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
+      return;
     }
-    if (numberExist) {
-      alert(`${newNumber} is already added`)
-      setNewNumber("")
-    }
 
-    const addName = {
+    const newPerson = {
       name: newName,
-      id: String(persons.length + 1),
       number: newNumber,
-    }
+    };
 
-    setPersons(persons.concat(addName))
-    setNewName("")
-    setNewNumber("")
-  }
+    personService.createPerson(newPerson).then((returnedPerson) => {
+      console.log(returnedPerson);
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
 
   const filterName = (filter) => {
     return persons.filter((person) =>
       person.name.toLowerCase().includes(filter.toLowerCase())
-    )
-  }
-  let result = filterName(filter)
+    );
+  };
+  let result = filterName(filter);
 
   const handleChangeName = (e) => {
-    setNewName(e.target.value)
-  }
+    setNewName(e.target.value);
+  };
   const handleChangeNumber = (e) => {
-    setNewNumber(e.target.value)
-  }
+    setNewNumber(e.target.value);
+  };
   const handleFilter = (e) => {
-    setFilter(e.target.value)
-  }
+    setFilter(e.target.value);
+  };
+
+  const handleDeletePerson = (id) => {
+    if (window.confirm("Are you sure you want to delete this person?")) {
+      personService.deletePerson(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
 
   return (
     <div>
@@ -71,9 +92,9 @@ const App = () => {
         newName={newName}
         newNumber={newNumber}
       />
-      <Number result={result} />
+      <Number result={result} handleDeletePerson={handleDeletePerson} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

@@ -1,35 +1,43 @@
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import Note from "./Components/Note"
-import axios from 'axios'
+import noteService from "./services/notes"
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState("")
   const [showAll, setShowAll] = useState(true)
 
-useEffect(() => {
-  console.log('effect');
-  axios
-  .get('http://localhost:3001/notes')
-  .then(response => {
-    console.log('promise fullfilled');
-    
-    setNotes(response.data)
-  })
-},[])
-console.log("render", notes.length,'notes');
-
+  useEffect(() => {
+    noteService.getAll().then((initialNotes) => {
+      setNotes(initialNotes)
+    })
+  }, [])
 
   const addNote = (e) => {
     e.preventDefault()
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-      id: String(notes.length + 1),
     }
 
-    setNotes(notes.concat(noteObject))
-    setNewNote("")
+    noteService.create(noteObject).then((returnedNote) => {
+      setNotes(notes.concat(returnedNote))
+      setNewNote("")
+    })
+  }
+
+  const togglrImportance = (id) => {
+    const note = notes.find((n) => n.id == id)
+    const changedNote = { ...note, important: !note.important }
+
+    noteService.update(id, changedNote).then((returnedNote) => {
+      setNotes(notes.map((n) => (n.id !== id ? n : returnedNote)))
+    }).catch(error => {
+      alert(
+        `the note '${note.content}' was already deleted from server`
+      )
+      setNotes(notes.filter(n => n.id !== id))
+    })
   }
 
   const notesToShow = showAll
@@ -45,11 +53,15 @@ console.log("render", notes.length,'notes');
     <div>
       <h1>Notes</h1>
       <button onClick={() => setShowAll(!showAll)}>
-        show {showAll ? 'important' : 'all'}
+        show {showAll ? "important" : "all"}
       </button>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            togglrImportance={() => togglrImportance(note.id)}
+          />
         ))}
       </ul>
       <form action="" onSubmit={addNote}>
