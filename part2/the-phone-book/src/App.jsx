@@ -1,25 +1,29 @@
-import { useState, useEffect } from "react";
-import Filter from "./components/Filter";
-import AddName from "./components/AddName";
-import Number from "./components/Number";
-import personService from "./services/persons";
+import { useState, useEffect } from "react"
+import Filter from "./components/Filter"
+import AddName from "./components/AddName"
+import Number from "./components/Number"
+import personService from "./services/persons"
+import Message from "./components/Message"
+import ErrorMsg from "./components/ErrorMsg"
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [filter, setFilter] = useState("");
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState("")
+  const [newNumber, setNewNumber] = useState("")
+  const [filter, setFilter] = useState("")
+  const [msg, setMsg] = useState(null)
+  const [errorMSg, setErrorMsg] = useState(null)
 
   useEffect(() => {
     personService.getAllPersons().then((initialPersons) => {
-      setPersons(initialPersons);
-    });
-  }, []);
+      setPersons(initialPersons)
+    })
+  }, [])
 
   const handleAdding = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const existingPerson = persons.find((person) => person.name === newName);
+    const existingPerson = persons.find((person) => person.name === newName)
 
     if (existingPerson) {
       if (
@@ -27,7 +31,7 @@ const App = () => {
           `${newName} is already added to the phonebook, replace the old number with new number?`
         )
       ) {
-        const updatedPerson = { ...existingPerson, number: newNumber };
+        const updatedPerson = { ...existingPerson, number: newNumber }
         personService
           .updatePerson(existingPerson.id, updatedPerson)
           .then((returnedPerson) => {
@@ -35,55 +39,65 @@ const App = () => {
               persons.map((person) =>
                 person.id !== existingPerson.id ? person : returnedPerson
               )
-            );
-            setNewName("");
-            setNewNumber("");
-          });
+            )
+            setNewName("")
+            setNewNumber("")
+          }).catch(error => {
+            setErrorMsg(`${newName} already removed from server`)
+            setTimeout(() => {
+              setErrorMsg(null)
+            },3000)
+          })
       }
-      return;
+      return
     }
 
     const newPerson = {
       name: newName,
       number: newNumber,
-    };
+    }
 
     personService.createPerson(newPerson).then((returnedPerson) => {
-      console.log(returnedPerson);
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
-  };
+      setPersons(persons.concat(returnedPerson))
+      setNewName("")
+      setNewNumber("")
+      setMsg(`${newName} added to the phonebook`)
+      setTimeout(() => {
+        setMsg(null)
+      }, 3000)
+    })
+  }
 
   const filterName = (filter) => {
     return persons.filter((person) =>
       person.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  };
-  let result = filterName(filter);
+    )
+  }
+  let result = filterName(filter)
 
   const handleChangeName = (e) => {
-    setNewName(e.target.value);
-  };
+    setNewName(e.target.value)
+  }
   const handleChangeNumber = (e) => {
-    setNewNumber(e.target.value);
-  };
+    setNewNumber(e.target.value)
+  }
   const handleFilter = (e) => {
-    setFilter(e.target.value);
-  };
+    setFilter(e.target.value)
+  }
 
   const handleDeletePerson = (id) => {
     if (window.confirm("Are you sure you want to delete this person?")) {
       personService.deletePerson(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+        setPersons(persons.filter((person) => person.id !== id))
+      })
     }
-  };
+  }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      {msg && <Message message={msg} />}
+      {errorMSg && <ErrorMsg errorMSg={errorMSg} />}
       <Filter handleFilter={handleFilter} value={filter} />
       <AddName
         handleAdding={handleAdding}
@@ -94,7 +108,7 @@ const App = () => {
       />
       <Number result={result} handleDeletePerson={handleDeletePerson} />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
