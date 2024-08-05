@@ -4,6 +4,7 @@ import axios from "axios"
 function App() {
   const [countries, setCountries] = useState([])
   const [filter, setfilter] = useState("")
+  const [show, setShow] = useState(false)
 
   useEffect(() => {
     axios
@@ -12,6 +13,12 @@ function App() {
         setCountries(res.data)
       })
   }, [countries])
+
+  const handleShowCountryData = (country) => {
+    setShow((prev) => ({
+      [country]: !prev[country],
+    }))
+  }
 
   const handleFilter = (e) => {
     setfilter(e.target.value)
@@ -57,9 +64,38 @@ function App() {
             </div>
           </div>
         ) : (
-          filterCountries.map((country) => (
-            <p key={country.cca3}>{country.name.common}</p>
-          ))
+          <div>
+            {filterCountries.map((country) => (
+              <div key={country.cca3}>
+                <p>
+                  {country.name.common}{" "}
+                  <button
+                    onClick={() => handleShowCountryData(country.name.common)}
+                  >
+                    Show
+                  </button>
+                </p>
+                {show[country.name.common] && (
+                  <div>
+                    <h1>{country.name.common}</h1>
+                    <p>capital {country.capital}</p>
+                    <p>area {country.area}</p>
+                    <div>
+                      <h2>Languages</h2>
+                      <ul>
+                        {Object.values(country.languages).map((lang, index) => (
+                          <li key={index}>{lang}</li>
+                        ))}
+                      </ul>
+                      <div>
+                        <img src={country.flags.png} alt={country.flags.alt} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
