@@ -1,4 +1,5 @@
 const express = require("express")
+const morgan = require("morgan")
 const app = express()
 
 app.use(express.json())
@@ -26,20 +27,20 @@ let persons = [
   },
 ]
 
-const requestLogger = (request, response, next) => {
-  console.log("Method:", request.method)
-  console.log("Path:  ", request.path)
-  console.log("Body:  ", request.body)
-  console.log("---")
-  next()
-}
-app.use(requestLogger)
+// const requestLogger = (request, response, next) => {
+//   console.log("Method:", request.method)
+//   console.log("Path:  ", request.path)
+//   console.log("Body:  ", request.body)
+//   console.log("---")
+//   next()
+// }
+// app.use(requestLogger)
 
-const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
-  }
-  
-  app.use(unknownEndpoint)
+morgan.token("body", (req) => JSON.stringify(req.body))
+
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+)
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello persons</h1>")
@@ -122,8 +123,12 @@ app.post("/api/persons", (req, res) => {
   res.json(person)
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" })
+}
+app.use(unknownEndpoint)
 //PORT
-const PORT = 3001
+const PORT = 3002
 app.listen(PORT, () => {
-  console.log(`server is running on ${3001} port`)
+  console.log(`server is running on ${PORT} port`)
 })
