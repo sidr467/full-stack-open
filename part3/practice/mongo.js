@@ -27,6 +27,8 @@ mongoose.connect(url).then(() => {
     })
     mongoose.connection.close()
   })
+
+  
   //   const note = new Note({
   //     content: 'HTML is easy',
   //     important: true,
