@@ -15,9 +15,17 @@ const App = () => {
   const [errorMSg, setErrorMsg] = useState(null)
 
   useEffect(() => {
-    personService.getAllPersons().then((initialPersons) => {
-      setPersons(initialPersons)
-    })
+    personService
+      .getAllPersons()
+      .then((initialPersons) => {
+        setPersons(initialPersons)
+      })
+      .catch((error) => {
+        setErrorMsg(error.response.data.error)
+        setTimeout(() => {
+          setErrorMsg(null)
+        }, 3000)
+      })
   }, [])
 
   const handleAdding = (e) => {
@@ -42,11 +50,12 @@ const App = () => {
             )
             setNewName("")
             setNewNumber("")
-          }).catch(error => {
-            setErrorMsg(`${newName} already removed from server`)
+          })
+          .catch((error) => {
+            setErrorMsg(error.response.data.error)
             setTimeout(() => {
               setErrorMsg(null)
-            },3000)
+            }, 3000)
           })
       }
       return
@@ -57,15 +66,23 @@ const App = () => {
       number: newNumber,
     }
 
-    personService.createPerson(newPerson).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName("")
-      setNewNumber("")
-      setMsg(`${newName} added to the phonebook`)
-      setTimeout(() => {
-        setMsg(null)
-      }, 3000)
-    })
+    personService
+      .createPerson(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName("")
+        setNewNumber("")
+        setMsg(`${newName} added to the phonebook`)
+        setTimeout(() => {
+          setMsg(null)
+        }, 3000)
+      })
+      .catch((error) => {
+        setErrorMsg(error.response.data.error)
+        setTimeout(() => {
+          setErrorMsg(null)
+        }, 3000)
+      })
   }
 
   const filterName = (filter) => {
@@ -87,9 +104,17 @@ const App = () => {
 
   const handleDeletePerson = (id) => {
     if (window.confirm("Are you sure you want to delete this person?")) {
-      personService.deletePerson(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id))
-      })
+      personService
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id))
+        })
+        .catch((error) => {
+          setErrorMsg(error.response.data.error)
+          setTimeout(() => {
+            setErrorMsg(null)
+          }, 3000)
+        })
     }
   }
 

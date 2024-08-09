@@ -1,5 +1,10 @@
-
-const AddName = ({handleAdding,newName,newNumber,handleChangeNumber,handleChangeName}) => {
+const AddName = ({
+  handleAdding,
+  newName,
+  newNumber,
+  handleChangeNumber,
+  handleChangeName,
+}) => {
   return (
     <div>
       <h2>Add a new</h2>
@@ -12,7 +17,7 @@ const AddName = ({handleAdding,newName,newNumber,handleChangeNumber,handleChange
           <p>
             number:{" "}
             <input
-              type="number"
+              type="text"
               value={newNumber}
               onChange={handleChangeNumber}
             />
