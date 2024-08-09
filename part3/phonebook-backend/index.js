@@ -1,13 +1,13 @@
-const express = require("express")
+const express = require('express')
 const app = express()
-const cors = require("cors")
-const Person = require("./models/person")
+const cors = require('cors')
+const Person = require('./models/person')
 
 app.use(express.json())
 app.use(cors())
-app.use(express.static("dist"))
+app.use(express.static('dist'))
 
-app.get("/api/persons", (req, res, next) => {
+app.get('/api/persons', (req, res, next) => {
   Person.find({})
     .then((people) => {
       res.json(people)
@@ -17,7 +17,7 @@ app.get("/api/persons", (req, res, next) => {
     })
 })
 
-app.get("/api/persons/:id", (req, res, next) => {
+app.get('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
   Person.findById(id)
     .then((result) => {
@@ -32,7 +32,7 @@ app.get("/api/persons/:id", (req, res, next) => {
     })
 })
 
-app.get("/info", (req, res, next) => {
+app.get('/info', (req, res, next) => {
   Person.countDocuments({})
     .then((result) => {
       res.send(`<p>Total ${result} people in database </br></br> ${Date()}</p>`)
@@ -42,10 +42,10 @@ app.get("/info", (req, res, next) => {
     })
 })
 
-app.post("/api/persons", (req, res, next) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body
   if (!body.name || !body.number) {
-    return res.status(400).json({ error: "Name and number are required" })
+    return res.status(400).json({ error: 'Name and number are required' })
   }
 
   Person.findOne({ name: body.name }).then((existingPerson) => {
@@ -58,7 +58,7 @@ app.post("/api/persons", (req, res, next) => {
       Person.findByIdAndUpdate(existingPerson._id, updatedPerson, {
         new: true,
         runValidators: true,
-        context: "query",
+        context: 'query',
       })
         .then((updatedResult) => {
           res.json(updatedResult)
@@ -84,10 +84,10 @@ app.post("/api/persons", (req, res, next) => {
   })
 })
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
   Person.findByIdAndDelete(id)
-    .then((deletedPerson) => {
+    .then(() => {
       res.status(204).end()
     })
     .catch((error) => {
@@ -95,7 +95,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
     })
 })
 
-app.put("/api/persons/:id", (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
   const { name, number } = req.body
 
@@ -115,9 +115,9 @@ app.put("/api/persons/:id", (req, res, next) => {
 
 const errorHandler = (error, req, res, next) => {
   console.log(error)
-  if (error.name === "CastError") {
-    return res.status(400).send({ error: "malformatted id" })
-  } else if (error.name === "ValidationError") {
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
   }
 

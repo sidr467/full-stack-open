@@ -10,7 +10,7 @@ console.log("connecting to", url)
 mongoose
   .connect(url)
 
-  .then((result) => {
+  .then(() => {
     console.log("connected to MongoDB")
   })
   .catch((error) => {
@@ -28,7 +28,6 @@ const personSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: function (v) {
-        // Regular expression to validate phone numbers
         return /^\d{2,3}-\d{5,}$/.test(v)
       },
       message: (props) =>
