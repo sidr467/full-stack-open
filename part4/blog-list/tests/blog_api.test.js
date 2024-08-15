@@ -31,71 +31,75 @@ describe.only("When there is already some Blogs are added", () => {
     assert.ok(blogs[0]._id, "Blog is missing '_id' property")
   })
 
-  test("A valid note can be added", async () => {
-    const initialBlogs = helper.initialBlogs
+  describe("Blog adding", () => {
+    test("A valid Blog can be added", async () => {
+      const initialBlogs = helper.initialBlogs
 
-    const newBlog = {
-      title: "Hello test",
-      author: "Sid r",
-      url: "abdajkdkja",
-      likes: 100,
-    }
+      const newBlog = {
+        title: "Hello test",
+        author: "Sid r",
+        url: "abdajkdkja",
+        likes: 100,
+      }
 
-    await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/)
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/)
 
-    const blogsAtEnd = await Blog.find({})
-    assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
+      const blogsAtEnd = await Blog.find({})
+      assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
 
-    const title = blogsAtEnd.map((blog) => blog.title)
-    assert(title.includes(newBlog.title), "new blog missing")
+      const title = blogsAtEnd.map((blog) => blog.title)
+      assert(title.includes(newBlog.title), "new blog missing")
+    })
   })
 
-  test("Blog without likes defaults to 0", async () => {
-    const newBlog = {
-      title: "No Likes",
-      author: "Sid",
-      url: "badjakdjk",
-    }
+  describe("Adding with missing field", () => {
+    test("Blog without likes defaults to 0", async () => {
+      const newBlog = {
+        title: "No Likes",
+        author: "Sid",
+        url: "badjakdjk",
+      }
 
-    const response = await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/)
+      const response = await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/)
 
-    assert.strictEqual(response.body.likes, 0, "likes should be 0")
-  })
+      assert.strictEqual(response.body.likes, 0, "likes should be 0")
+    })
 
-  test("Blog without title", async () => {
-    const newBlog = {
-      author: "sid r",
-      url: "adnlknad",
-      likes: 12,
-    }
+    test("Blog without title", async () => {
+      const newBlog = {
+        author: "sid r",
+        url: "adnlknad",
+        likes: 12,
+      }
 
-    await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(400)
-      .expect("Content-Type", /application\/json/)
-  })
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+        .expect("Content-Type", /application\/json/)
+    })
 
-  test("Blog without url", async () => {
-    const newBlog = {
-      title: "without url",
-      author: "sid r",
-      likes: 12,
-    }
+    test("Blog without url", async () => {
+      const newBlog = {
+        title: "without url",
+        author: "sid r",
+        likes: 12,
+      }
 
-    await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(400)
-      .expect("Content-Type", /application\/json/)
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+        .expect("Content-Type", /application\/json/)
+    })
   })
 
   describe("deletion of a blog", () => {
