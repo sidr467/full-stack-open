@@ -8,13 +8,13 @@ const Blog = require("../models/blog")
 
 const api = supertest(app)
 
-describe.only("When there is already some Blogs are added", () => {
+describe("When there is already some Blogs are added", () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
   })
 
-  test.only("Blogs are returned as JSON", async () => {
+  test("Blogs are returned as JSON", async () => {
     await api
       .get("/api/blogs")
       .expect(200)
@@ -118,8 +118,8 @@ describe.only("When there is already some Blogs are added", () => {
     })
   })
 
-  describe.only("update of blog", () => {
-    test.only("Succeed with valid data", async () => {
+  describe("update of blog", () => {
+    test("Succeed with valid data", async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogsToUpdate = blogsAtStart[0]
 
@@ -168,7 +168,7 @@ after(async () => {
 //     },
 //   ]
 
-//   test("when list has only one blog, equals the likes of that", () => {
+//   test("when list has one blog, equals the likes of that", () => {
 //     const result = listHelper.totalLikes(listWithOneBlog)
 //     assert.strictEqual(result, 5)
 //   })
