@@ -9,21 +9,22 @@ const helper = require("./test_helpers")
 
 const api = supertest(app)
 
-describe("User api tests user validation", () => {
+describe.only("User api tests user validation", () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash("secret", 10)
-    const user = new User({ username: "root", passwordHash })
+    const user = new User({ username: "root", name: "root", passwordHash })
 
     await user.save()
   })
 
-  test("Creation of valid username and password", async () => {
+  test.only("Creation of valid username and password", async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
       username: "newuser",
+      name: "new user",
       password: "analkfn",
     }
 
