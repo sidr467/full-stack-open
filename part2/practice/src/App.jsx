@@ -1,19 +1,34 @@
 import { useState, useEffect } from "react"
 import Note from "./Components/Note"
 import noteService from "./services/notes"
+import loginService from "./services/login"
 import Notification from "./Components/Notification"
 import Footer from "./Components/Footer"
+import LoginForm from "./Components/LoginForm"
+import NoteForm from "./Components/NoteForm"
 
 const App = () => {
-  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState("")
   const [showAll, setShowAll] = useState(true)
   const [errorMsg, setErrorMsg] = useState("some error happened")
+  const [notes, setNotes] = useState([])
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
       setNotes(initialNotes)
     })
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser")
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
   }, [])
 
   const addNote = (e) => {
@@ -29,7 +44,7 @@ const App = () => {
     })
   }
 
-  const togglrImportance = (id) => {
+  const toggleImportance = (id) => {
     const note = notes.find((n) => n.id == id)
     const changedNote = { ...note, important: !note.important }
 
@@ -38,7 +53,7 @@ const App = () => {
       .then((returnedNote) => {
         setNotes(notes.map((n) => (n.id !== id ? n : returnedNote)))
       })
-      .catch((error) => {
+      .catch(() => {
         setErrorMsg(`Note ${note.content} was already removed from server`)
         setTimeout(() => {
           setErrorMsg(null)
@@ -56,10 +71,51 @@ const App = () => {
     setNewNote(e.target.value)
   }
 
+  const handleLogin = async (event) => {
+    event.preventDefault()
+
+    try {
+      const user = await loginService.login({
+        username,
+        password,
+      })
+
+      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user))
+      noteService.setToken(user.token)
+      setUser(user)
+      setUsername("")
+      setPassword("")
+    } catch (exception) {
+      setErrorMsg("Wrong credentials")
+      setTimeout(() => {
+        setErrorMsg(null)
+      }, 5000)
+    }
+  }
+
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMsg} />
+      {user === null ? (
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          password={password}
+          setPassword={setPassword}
+          setUsername={setUsername}
+        />
+      ) : (
+        <div>
+          <p>{user.name} logged-in</p>
+          <NoteForm
+            addNote={addNote}
+            handleNoteChange={handleNoteChange}
+            newNote={newNote}
+          />
+        </div>
+      )}
+
       <button onClick={() => setShowAll(!showAll)}>
         show {showAll ? "important" : "all"}
       </button>
@@ -68,14 +124,11 @@ const App = () => {
           <Note
             key={note.id}
             note={note}
-            togglrImportance={() => togglrImportance(note.id)}
+            toggleImportance={() => toggleImportance(note.id)}
           />
         ))}
       </ul>
-      <form action="" onSubmit={addNote}>
-        <input type="text" value={newNote} onChange={handleNoteChange} />
-        <button type="submit">Save</button>
-      </form>
+
       <Footer />
     </div>
   )
@@ -83,14 +136,9 @@ const App = () => {
 
 export default App
 
-
-
-
-
-
-{/*Exchange rate api  */}
-
-
+{
+  /*Exchange rate api  */
+}
 
 // import { useState, useEffect } from 'react'
 // import axios from 'axios'
