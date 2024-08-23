@@ -3,6 +3,7 @@ import blogService from "./services/blogs"
 import loginService from "./services/login"
 import UserBlogs from "./components/UserBlogs"
 import LoginForm from "./components/LoginForm"
+import Togglable from "./components/Togglable"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -51,14 +52,15 @@ const App = () => {
   return (
     <div>
       {user === null ? (
-        <LoginForm
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          setPassword={setPassword}
-          setUsername={setUsername}
-          errorMsg={errorMsg}
-        />
+ 
+          <LoginForm
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            setPassword={setPassword}
+            setUsername={setUsername}
+            errorMsg={errorMsg}
+          />
       ) : (
         <UserBlogs
           handleLogout={handleLogout}

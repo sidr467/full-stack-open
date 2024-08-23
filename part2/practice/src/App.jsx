@@ -1,20 +1,18 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Note from "./Components/Note"
 import noteService from "./services/notes"
-import loginService from "./services/login"
 import Notification from "./Components/Notification"
 import Footer from "./Components/Footer"
 import LoginForm from "./Components/LoginForm"
 import NoteForm from "./Components/NoteForm"
+import Togglable from "./Components/Togglable"
 
 const App = () => {
-  const [newNote, setNewNote] = useState("")
   const [showAll, setShowAll] = useState(true)
-  const [errorMsg, setErrorMsg] = useState("some error happened")
+  const [errorMsg, setErrorMsg] = useState(null)
   const [notes, setNotes] = useState([])
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
+  const noteFormRef = useRef()
 
   useEffect(() => {
     noteService.getAll().then((initialNotes) => {
@@ -31,16 +29,10 @@ const App = () => {
     }
   }, [])
 
-  const addNote = (e) => {
-    e.preventDefault()
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-    }
-
+  const addNote = (noteObject) => {
+    noteFormRef.current.toggleVisibility()
     noteService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote))
-      setNewNote("")
     })
   }
 
@@ -66,53 +58,22 @@ const App = () => {
     ? notes
     : notes.filter((note) => note.important === true)
 
-  const handleNoteChange = (e) => {
-    console.log(e.target.value)
-    setNewNote(e.target.value)
-  }
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-
-      window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user))
-      noteService.setToken(user.token)
-      setUser(user)
-      setUsername("")
-      setPassword("")
-    } catch (exception) {
-      setErrorMsg("Wrong credentials")
-      setTimeout(() => {
-        setErrorMsg(null)
-      }, 5000)
-    }
-  }
+  window.localStorage.clear()
 
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMsg} />
       {user === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          password={password}
-          setPassword={setPassword}
-          setUsername={setUsername}
-        />
+        <Togglable buttonLabel="login">
+          <LoginForm setUser={setUser} setErrorMsg={setErrorMsg} />
+        </Togglable>
       ) : (
         <div>
           <p>{user.name} logged-in</p>
-          <NoteForm
-            addNote={addNote}
-            handleNoteChange={handleNoteChange}
-            newNote={newNote}
-          />
+          <Togglable buttonLabel="new note" ref={noteFormRef}>
+            <NoteForm createNote={addNote} />
+          </Togglable>
         </div>
       )}
 
