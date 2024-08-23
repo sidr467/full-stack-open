@@ -9,6 +9,7 @@ const LoginForm = ({
   return (
     <form action="" onSubmit={handleLogin}>
       <h1>Login to application</h1>
+      {errorMsg && <p className="errorMsg">{errorMsg}</p>}
       <div>
         <label htmlFor="username">Username</label>
         <input
@@ -28,7 +29,6 @@ const LoginForm = ({
         />
       </div>
       <button type="submit">Login</button>
-      {errorMsg && <p>{errorMsg}</p>}
     </form>
   )
 }
