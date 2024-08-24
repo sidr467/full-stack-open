@@ -37,7 +37,7 @@ const App = () => {
   }
 
   const toggleImportance = (id) => {
-    const note = notes.find((n) => n.id == id)
+    const note = notes.find((n) => n.id === id)
     const changedNote = { ...note, important: !note.important }
 
     noteService
