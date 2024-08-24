@@ -18,7 +18,10 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      blogService.getAll().then((blogs) => setBlogs(blogs))
+      blogService.getAll().then((blogs) => {
+        const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+        setBlogs(sortedBlogs)
+      })
     }
   }, [])
 
@@ -52,15 +55,14 @@ const App = () => {
   return (
     <div>
       {user === null ? (
- 
-          <LoginForm
-            username={username}
-            password={password}
-            handleLogin={handleLogin}
-            setPassword={setPassword}
-            setUsername={setUsername}
-            errorMsg={errorMsg}
-          />
+        <LoginForm
+          username={username}
+          password={password}
+          handleLogin={handleLogin}
+          setPassword={setPassword}
+          setUsername={setUsername}
+          errorMsg={errorMsg}
+        />
       ) : (
         <UserBlogs
           handleLogout={handleLogout}
