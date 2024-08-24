@@ -37,13 +37,13 @@ const Blog = ({ blog, blogs, setBlogs }) => {
       <div className="blogstyle">
         {!blogDataVisible ? (
           <div>
-            {blog.title} {blog.author}
+            {blog.title} -- {blog.author}
             <button onClick={() => setDataBlogVisible(true)}>View</button>
           </div>
         ) : (
           <div>
             <div>
-              {blog.title} - {blog.author}
+              {blog.title} -- {blog.author}
               <button onClick={() => setDataBlogVisible(false)}>hide</button>
             </div>
             <a href="">{blog.url}</a>
@@ -62,18 +62,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
 }
 
 Blog.propTypes = {
-  blog: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    url: PropTypes.string,
-    likes: PropTypes.number.isRequired,
-    user: PropTypes.shape({
-      name: PropTypes.string,
-    }),
-  }).isRequired,
-  blogs: PropTypes.arrayOf(PropTypes.object).isRequired,
   setBlogs: PropTypes.func.isRequired,
+  blog: PropTypes.object.isRequired,
+  blogs: PropTypes.array.isRequired,
 }
 
 export default Blog

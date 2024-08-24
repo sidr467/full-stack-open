@@ -39,22 +39,27 @@ const UserBlogs = ({ user, handleLogout, blogs, setBlogs }) => {
 }
 
 UserBlogs.propTypes = {
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired
-  }).isRequired,
+  user: PropTypes.object.isRequired,
+  blogs: PropTypes.array.isRequired,
   handleLogout: PropTypes.func.isRequired,
-  blogs: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
-    url: PropTypes.string,
-    likes: PropTypes.number.isRequired,
-    user: PropTypes.shape({
-      name: PropTypes.string
-    })
-  })).isRequired,
-  setBlogs: PropTypes.func.isRequired
+  setBlogs: PropTypes.func.isRequired,
 }
+// user: PropTypes.shape({
+//   username: PropTypes.string.isRequired,
+// }).isRequired,
+// handleLogout: PropTypes.func.isRequired,
+// blogs: PropTypes.arrayOf(
+//   PropTypes.shape({
+//     id: PropTypes.string.isRequired,
+//     title: PropTypes.string.isRequired,
+//     author: PropTypes.string.isRequired,
+//     url: PropTypes.string,
+//     likes: PropTypes.number.isRequired,
+//     user: PropTypes.shape({
+//       name: PropTypes.string,
+//     }),
+//   })
+// ).isRequired,
+// setBlogs: PropTypes.func.isRequired,
 
 export default UserBlogs
