@@ -4,6 +4,7 @@ import PropTypes from "prop-types"
 
 const Blog = ({ blog, blogs, setBlogs }) => {
   const [blogDataVisible, setDataBlogVisible] = useState(false)
+  console.log(blog)
 
   const handleUpdate = async () => {
     const id = blog.id
@@ -36,19 +37,21 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     <>
       <div className="blogstyle">
         {!blogDataVisible ? (
-          <div>
+          <div className="blogAuthorTitle">
             {blog.title} -- {blog.author}
-            <button onClick={() => setDataBlogVisible(true)}>View</button>
+            <button className="view" onClick={() => setDataBlogVisible(true)}>
+              View
+            </button>
           </div>
         ) : (
-          <div>
-            <div>
+          <div className="blogDetails">
+            <div className="">
               {blog.title} -- {blog.author}
               <button onClick={() => setDataBlogVisible(false)}>hide</button>
             </div>
             <a href="">{blog.url}</a>
             <div>
-              {blog.likes} <button onClick={handleUpdate}>Like</button>
+              {blog.likes} <button className="likeBtn" onClick={handleUpdate}>Like</button>
             </div>
             <div> {blog.user.name}</div>
             <button className="deleteBtn" onClick={handleDeleteBlog}>
