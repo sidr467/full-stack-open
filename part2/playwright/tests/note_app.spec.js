@@ -11,7 +11,7 @@ describe("Note app", () => {
         password: "salainen",
       },
     })
-
+1
     await page.goto("/")
   })
 

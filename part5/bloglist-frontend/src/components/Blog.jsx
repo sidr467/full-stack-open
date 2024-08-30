@@ -46,12 +46,16 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         ) : (
           <div className="blogDetails">
             <div className="">
-              {blog.title} -- {blog.author}
+              <span className="title">{blog.title}</span> --{" "}
+              <span className="author">{blog.author}</span>
               <button onClick={() => setDataBlogVisible(false)}>hide</button>
             </div>
             <a href="">{blog.url}</a>
             <div>
-              {blog.likes} <button className="likeBtn" onClick={handleUpdate}>Like</button>
+              <span className="likes">{blog.likes}</span>{" "}
+              <button className="likeBtn" onClick={handleUpdate}>
+                Like
+              </button>
             </div>
             <div> {blog.user.name}</div>
             <button className="deleteBtn" onClick={handleDeleteBlog}>
