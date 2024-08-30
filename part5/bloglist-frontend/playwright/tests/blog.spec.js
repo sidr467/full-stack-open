@@ -11,6 +11,13 @@ describe("Blog app", () => {
         password: "abcde",
       },
     })
+    await request.post("http://localhost:3003/api/users", {
+      data: {
+        name: "dis",
+        username: "disr",
+        password: "abcde",
+      },
+    })
     await page.goto("http://localhost:5173")
   })
 
@@ -32,7 +39,7 @@ describe("Blog app", () => {
     })
   })
 
-  describe.only("When logged in", () => {
+  describe("When logged in", () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, "sidr", "abcde")
     })
@@ -74,6 +81,74 @@ describe("Blog app", () => {
 
       const blog = page.locator("text=delete test")
       await expect(blog).toHaveCount(0)
+    })
+
+    test("Remove button only visible if user have created blog", async ({
+      page,
+    }) => {
+      await createBlog(page, "blog1", "Sid", "blog1.com")
+      await page.getByRole("button", { name: "Logout" }).click()
+      await loginWith(page, "disr", "abcde")
+      await createBlog(page, "blog2", "Sid", "blog2.com")
+      await expect(page.getByText("blog2 -- Sid")).toBeVisible()
+      await page
+        .getByText("blog1 -- Sid")
+        .getByRole("button", { name: "View" })
+        .click()
+
+      await expect(page.getByRole("button", { name: "remove" })).toHaveCount(0)
+
+      await page
+        .getByText("blog2 -- Sid")
+        .getByRole("button", { name: "View" })
+        .click()
+
+      await expect(page.getByRole("button", { name: "remove" })).toBeVisible()
+    })
+
+    test.only("Blogs are sorted by max likes", async ({ page }) => {
+      await createBlog(page, "blog1", "Sid", "blog1.com")
+      await createBlog(page, "blog2", "Sid", "blog2.com")
+      await createBlog(page, "blog3", "Sid", "blog3.com")
+
+      await page.getByRole("button", { name: "View" }).nth(2).click()
+      for (let i = 0; i < 2; i++) {
+        await page.getByRole("button", { name: "Like" }).click()
+        await page.waitForTimeout(500)
+      }
+      await expect(page.getByText("2", { exact: true })).toBeVisible()
+      await page.getByRole("button", { name: "hide" }).click()
+
+      await page.getByRole("button", { name: "View" }).nth(1).click()
+      for (let i = 0; i < 1; i++) {
+        await page.getByRole("button", { name: "Like" }).click()
+        await page.waitForTimeout(500)
+      }
+      await expect(page.getByText("1", { exact: true })).toBeVisible()
+      await page.getByRole("button", { name: "hide" }).click()
+
+      await page.reload()
+      await page.waitForTimeout(1000)
+      const firstBlogTitle = await page
+        .locator(".blogstyle")
+        .first()
+        .locator(".title")
+        .textContent()
+      expect(firstBlogTitle.trim()).toBe("blog3")
+
+      const secondBlogTitle = await page
+        .locator(".blogstyle")
+        .nth(1)
+        .locator(".title")
+        .textContent()
+      expect(secondBlogTitle.trim()).toBe("blog2")
+
+      const thirdBlogTitle = await page
+        .locator(".blogstyle")
+        .nth(2)
+        .locator(".title")
+        .textContent()
+      expect(thirdBlogTitle.trim()).toBe("blog1")
     })
   })
 })

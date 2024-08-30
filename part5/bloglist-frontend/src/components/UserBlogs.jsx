@@ -21,6 +21,7 @@ const UserBlogs = ({ user, handleLogout, blogs, setBlogs }) => {
             setBlogs={setBlogs}
             blogs={blogs}
             setSuccessMsg={setSuccessMsg}
+            user={user}
           />
         </Togglable>
         <br />
