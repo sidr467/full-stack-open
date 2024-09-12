@@ -2,8 +2,6 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { Provider } from "react-redux"
 import { createStore, combineReducers } from "redux"
-import { createNote } from './reducers/noteReducer'
-import { filterChange } from './reducers/filterReducer'
 import noteReducer from "./reducers/noteReducer"
 import App from "./App"
 import filterReducer from "./reducers/filterReducer"
