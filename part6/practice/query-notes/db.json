@@ -1,0 +1,34 @@
+{
+  "notes": [
+    {
+      "content": "the app state is in redux store",
+      "important": true,
+      "id": "1"
+    },
+    {
+      "content": "state changes are made with actions",
+      "important": false,
+      "id": "2"
+    },
+    {
+      "id": "5112",
+      "content": "aamama",
+      "important": false
+    },
+    {
+      "id": "702c",
+      "content": "adad",
+      "important": true
+    },
+    {
+      "id": "677e",
+      "content": "adkjad",
+      "important": true
+    },
+    {
+      "id": "53ce",
+      "content": "dad",
+      "important": true
+    }
+  ]
+}
