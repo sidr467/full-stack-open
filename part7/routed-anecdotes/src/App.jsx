@@ -8,6 +8,7 @@ import AnecdoteList from "./components/AnecdoteList"
 import Anecdote from "./components/Anecdote"
 
 const App = () => {
+  const [notification, setNotification] = useState("")
   const [anecdotes, setAnecdotes] = useState([
     {
       content: "If it hurts, do it more often",
@@ -25,14 +26,6 @@ const App = () => {
     },
   ])
 
-  const [notification, setNotification] = useState("")
-
-  const match = useMatch("/anecdotes/:id")
-  const anecdote = match
-    ? anecdotes.find((anecdote) => anecdote.id === Number(match.params.id))
-    : null
-  console.log(anecdote)
-
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
@@ -42,18 +35,24 @@ const App = () => {
     }, 5000)
   }
 
-  const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
+  const match = useMatch("/anecdotes/:id")
+  const anecdote = match
+    ? anecdotes.find((anecdote) => anecdote.id === Number(match.params.id))
+    : null
+  console.log(anecdote)
 
-  const vote = (id) => {
-    const anecdote = anecdoteById(id)
+  // const anecdoteById = (id) => anecdotes.find((a) => a.id === id)
 
-    const voted = {
-      ...anecdote,
-      votes: anecdote.votes + 1,
-    }
+  // const vote = (id) => {
+  //   const anecdote = anecdoteById(id)
 
-    setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
-  }
+  //   const voted = {
+  //     ...anecdote,
+  //     votes: anecdote.votes + 1,
+  //   }
+
+  //   setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)))
+  // }
 
   return (
     <div>
