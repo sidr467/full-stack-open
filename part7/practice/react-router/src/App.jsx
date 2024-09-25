@@ -12,6 +12,24 @@ import Users from "./components/Users"
 import Notes from "./components/Notes"
 import Note from "./components/Note"
 import Login from "./components/Login"
+import { Alert } from "react-bootstrap"
+import styled from "styled-components"
+
+const Page = styled.div`
+  padding: 1em;
+  background: papayawhip;
+`
+
+const Navigation = styled.div`
+  background: BurlyWood;
+  padding: 1em;
+`
+
+const Footer = styled.div`
+  background: Chocolate;
+  padding: 1em;
+  margin-top: 1em;
+`
 
 const App = () => {
   const [notes, setNotes] = useState([
@@ -35,6 +53,7 @@ const App = () => {
     },
   ])
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const match = useMatch("/notes/:id")
   const note = match
@@ -43,6 +62,10 @@ const App = () => {
 
   const login = (user) => {
     setUser(user)
+    setMessage(`welcome ${user}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 10000)
   }
 
   const padding = {
@@ -50,16 +73,17 @@ const App = () => {
   }
 
   return (
-    <>
-      <div>
-        <Link style={padding} to="">
-          Home
+    <Page>
+      {message && <Alert variant="success">{message}</Alert>}
+      <Navigation>
+        <Link style={padding} to="/">
+          home
         </Link>
         <Link style={padding} to="/notes">
-          Notes
+          notes
         </Link>
         <Link style={padding} to="/users">
-          Users
+          users
         </Link>
         {user ? (
           <em>{user} logged in</em>
@@ -68,8 +92,8 @@ const App = () => {
             login
           </Link>
         )}
-      </div>
-
+      </Navigation>
+      <br />
       <Routes>
         <Route path="/notes/:id" element={<Note note={note} />}></Route>
         <Route path="/notes" element={<Notes notes={notes} />}></Route>
@@ -80,7 +104,10 @@ const App = () => {
         <Route path="/login" element={<Login onLogin={login} />} />
         <Route path="/" element={<Home />}></Route>
       </Routes>
-    </>
+      <Footer>
+        <em>Note app, Department of Computer Science 2022</em>
+      </Footer>
+    </Page>
   )
 }
 
