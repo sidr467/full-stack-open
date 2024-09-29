@@ -3,14 +3,15 @@ import blogService from "./services/blogs"
 import loginService from "./services/login"
 import UserBlogs from "./components/UserBlogs"
 import LoginForm from "./components/LoginForm"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { showNotification } from "./reducers/notificationReducer"
+import { initialBlogs } from "./reducers/blogsReducer"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
+  const blogs = useSelector((state) => state.blogs)
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -19,12 +20,9 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      blogService.getAll().then((blogs) => {
-        const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-        setBlogs(sortedBlogs)
-      })
+      dispatch(initialBlogs())
     }
-  }, [])
+  }, [dispatch])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -38,8 +36,7 @@ const App = () => {
       setUser(user)
       setPassword("")
       setUsername("")
-      const blogs = await blogService.getAll()
-      setBlogs(blogs)
+      dispatch(initialBlogs())
     } catch (exception) {
       dispatch(showNotification("Wrong credentials", 5000))
     }
@@ -61,12 +58,7 @@ const App = () => {
           setUsername={setUsername}
         />
       ) : (
-        <UserBlogs
-          handleLogout={handleLogout}
-          blogs={blogs}
-          user={user}
-          setBlogs={setBlogs}
-        />
+        <UserBlogs handleLogout={handleLogout} blogs={blogs} user={user} />
       )}
     </div>
   )

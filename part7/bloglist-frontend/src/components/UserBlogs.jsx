@@ -4,7 +4,7 @@ import BlogForm from "./BlogForm"
 import PropTypes from "prop-types"
 import Notification from "./Notification"
 
-const UserBlogs = ({ user, handleLogout, blogs, setBlogs }) => {
+const UserBlogs = ({ user, handleLogout, blogs }) => {
   const style = {
     border: "solid",
     padding: 10,
@@ -25,18 +25,12 @@ const UserBlogs = ({ user, handleLogout, blogs, setBlogs }) => {
         </p>
         <Notification style={style} />
         <Togglable buttonLabel="create new blog">
-          <BlogForm setBlogs={setBlogs} blogs={blogs} user={user} />
+          <BlogForm blogs={blogs} user={user} />
         </Togglable>
         <br />
       </div>
       {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          user={user}
-        />
+        <Blog key={blog.id} blog={blog} blogs={blogs} user={user} />
       ))}
     </div>
   )
@@ -46,7 +40,6 @@ UserBlogs.propTypes = {
   user: PropTypes.object.isRequired,
   blogs: PropTypes.array.isRequired,
   handleLogout: PropTypes.func.isRequired,
-  setBlogs: PropTypes.func.isRequired,
 }
 // user: PropTypes.shape({
 //   username: PropTypes.string.isRequired,

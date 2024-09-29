@@ -1,10 +1,10 @@
 import { useState } from "react"
-import blogService from "../services/blogs"
 import PropTypes from "prop-types"
 import { useDispatch } from "react-redux"
 import { showNotification } from "../reducers/notificationReducer"
+import { createBlog } from "../reducers/blogsReducer"
 
-const BlogForm = ({ setBlogs, blogs, user }) => {
+const BlogForm = ({ user }) => {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
@@ -19,14 +19,11 @@ const BlogForm = ({ setBlogs, blogs, user }) => {
       url: url,
       user: { id: user.id, name: user.name },
     }
-
-    blogService.create(newBlog).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog))
-      dispatch(showNotification(`New blog ${title} by ${author} added`, 5000))
-      setAuthor("")
-      setTitle("")
-      setUrl("")
-    })
+    dispatch(createBlog(newBlog))
+    dispatch(showNotification(`New blog ${title} by ${author} added`, 5000))
+    setAuthor("")
+    setTitle("")
+    setUrl("")
   }
 
   return (
@@ -65,7 +62,6 @@ const BlogForm = ({ setBlogs, blogs, user }) => {
 }
 
 BlogForm.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
   blogs: PropTypes.array.isRequired,
   user: PropTypes.object.isRequired,
 }

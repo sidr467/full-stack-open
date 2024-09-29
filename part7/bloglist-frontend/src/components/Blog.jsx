@@ -1,20 +1,17 @@
 import { useState } from "react"
-import blogService from "../services/blogs"
 import PropTypes from "prop-types"
+import { useDispatch } from "react-redux"
+import { likeBlog, removeBlog } from "../reducers/blogsReducer"
 
-const Blog = ({ blog, blogs, setBlogs, user }) => {
+const Blog = ({ blog, user }) => {
   const [blogDataVisible, setDataBlogVisible] = useState(false)
+  const dispatch = useDispatch()
 
   const handleUpdate = async () => {
-    const id = blog.id
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    }
+    // const id = blog.id
 
     try {
-      const returnedBlog = await blogService.updateLikes(id, updatedBlog)
-      setBlogs(blogs.map((b) => (b.id !== id ? b : returnedBlog)))
+      dispatch(likeBlog(blog))
     } catch (error) {
       console.error("Error updating likes:", error)
     }
@@ -24,8 +21,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     const id = blog.id
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
-        await blogService.deleteBlog(id)
-        setBlogs(blogs.filter((b) => b.id !== id))
+        dispatch(removeBlog(id))
       } catch (error) {
         console.error("Failed to delete blog:", error)
       }
@@ -72,10 +68,8 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
 }
 
 Blog.propTypes = {
-  setBlogs: PropTypes.func.isRequired,
   blog: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
-  blogs: PropTypes.array.isRequired,
 }
 
 export default Blog
