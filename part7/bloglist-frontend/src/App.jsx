@@ -6,11 +6,12 @@ import LoginForm from "./components/LoginForm"
 import { useDispatch, useSelector } from "react-redux"
 import { showNotification } from "./reducers/notificationReducer"
 import { initialBlogs } from "./reducers/blogsReducer"
+import { loginUser, logoutUser, setUser } from "./reducers/userReducer"
 
 const App = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.user)
   const blogs = useSelector((state) => state.blogs)
   const dispatch = useDispatch()
 
@@ -18,7 +19,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser")
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
       dispatch(initialBlogs())
     }
@@ -31,9 +32,8 @@ const App = () => {
         username,
         password,
       })
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(loginUser(user))
       setPassword("")
       setUsername("")
       dispatch(initialBlogs())
@@ -43,8 +43,7 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.clear()
-    setUser(null)
+    dispatch(logoutUser())
   }
 
   return (
