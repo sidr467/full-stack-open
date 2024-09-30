@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { showNotification } from "./reducers/notificationReducer"
 import { initialBlogs } from "./reducers/blogsReducer"
 import { loginUser, logoutUser, setUser } from "./reducers/userReducer"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import UserList from "./components/UserList"
+import { initialUsers } from "./reducers/usersReducer"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -22,6 +25,7 @@ const App = () => {
       dispatch(setUser(user))
       blogService.setToken(user.token)
       dispatch(initialBlogs())
+      dispatch(initialUsers())
     }
   }, [dispatch])
 
@@ -37,6 +41,7 @@ const App = () => {
       setPassword("")
       setUsername("")
       dispatch(initialBlogs())
+      dispatch(initialUsers())
     } catch (exception) {
       dispatch(showNotification("Wrong credentials", 5000))
     }
@@ -47,19 +52,33 @@ const App = () => {
   }
 
   return (
-    <div>
-      {user === null ? (
-        <LoginForm
-          username={username}
-          password={password}
-          handleLogin={handleLogin}
-          setPassword={setPassword}
-          setUsername={setUsername}
-        />
-      ) : (
-        <UserBlogs handleLogout={handleLogout} blogs={blogs} user={user} />
-      )}
-    </div>
+    <Router>
+      <div>
+        {user === null ? (
+          <LoginForm
+            username={username}
+            password={password}
+            handleLogin={handleLogin}
+            setPassword={setPassword}
+            setUsername={setUsername}
+          />
+        ) : (
+          <Routes>
+            <Route path="/users" element={<UserList />}></Route>
+            <Route
+              path="/"
+              element={
+                <UserBlogs
+                  handleLogout={handleLogout}
+                  blogs={blogs}
+                  user={user}
+                />
+              }
+            ></Route>
+          </Routes>
+        )}
+      </div>
+    </Router>
   )
 }
 
