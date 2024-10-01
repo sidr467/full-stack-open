@@ -60,4 +60,13 @@ export const likeBlog = (blog) => {
   }
 }
 
+export const addComment = (id, comment) => {
+  return (dispatch) => {
+    const commentObj = { comment }
+    blogService.addComment(id, commentObj).then((returnedBlog) => {
+      dispatch(updateBlog(returnedBlog))
+    })
+  }
+}
+
 export default blogSlice.reducer

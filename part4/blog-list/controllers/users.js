@@ -8,6 +8,7 @@ usersRouter.get("/", async (req, res) => {
     title: 1,
     author: 1,
     id: 1,
+    comments: 1,
   })
   res.json(users)
 })

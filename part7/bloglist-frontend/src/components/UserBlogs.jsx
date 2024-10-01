@@ -17,7 +17,7 @@ const UserBlogs = ({ user, handleLogout, blogs }) => {
   }
   return (
     <div>
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
       <div>
         <p>
           {user.username} loggedIn

@@ -12,7 +12,9 @@ import UserList from "./components/UserList"
 import { initialUsers } from "./reducers/usersReducer"
 import SingleUser from "./components/SingleUser"
 import SingleBlog from "./components/SingleBlog"
-import { Link } from "react-router-dom"
+import Nav from "react-bootstrap/Nav"
+import "bootstrap/dist/css/bootstrap.min.css"
+import Container from "react-bootstrap/Container"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -56,38 +58,43 @@ const App = () => {
 
   return (
     <Router>
-      <div>
-        <Link to="/">Blogs</Link>
-        <span> </span>
-        <Link to="/users">Users</Link>
-      </div>
-      <div>
-        {user === null ? (
-          <LoginForm
-            username={username}
-            password={password}
-            handleLogin={handleLogin}
-            setPassword={setPassword}
-            setUsername={setUsername}
-          />
-        ) : (
-          <Routes>
-            <Route path="/users" element={<UserList />}></Route>
-            <Route path="/users/:id" element={<SingleUser />}></Route>
-            <Route path="/blogs/:id" element={<SingleBlog />}></Route>
-            <Route
-              path="/"
-              element={
-                <UserBlogs
-                  handleLogout={handleLogout}
-                  blogs={blogs}
-                  user={user}
-                />
-              }
-            ></Route>
-          </Routes>
-        )}
-      </div>
+      <Container>
+        <Nav>
+          <Nav.Item>
+            <Nav.Link href="/">Blogs</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="/users">Users</Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <div>
+          {user === null ? (
+            <LoginForm
+              username={username}
+              password={password}
+              handleLogin={handleLogin}
+              setPassword={setPassword}
+              setUsername={setUsername}
+            />
+          ) : (
+            <Routes>
+              <Route path="/users" element={<UserList />}></Route>
+              <Route path="/users/:id" element={<SingleUser />}></Route>
+              <Route path="/blogs/:id" element={<SingleBlog />}></Route>
+              <Route
+                path="/"
+                element={
+                  <UserBlogs
+                    handleLogout={handleLogout}
+                    blogs={blogs}
+                    user={user}
+                  />
+                }
+              ></Route>
+            </Routes>
+          )}
+        </div>
+      </Container>
     </Router>
   )
 }

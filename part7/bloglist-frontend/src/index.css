@@ -1,33 +1,19 @@
-.errorMsg{
-    color: red;
-    background: lightgray;
-    font-size: 15px;
-    border-style: solid;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
+.errorMsg {
+  color: red;
+  background: lightgray;
+  font-size: 15px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
-.successMsg{
-    color: green;
-    background: lightgray;
-    font-size: 15px;
-    border-style: solid;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.blogstyle{
-    border: 1px solid black;
-    margin-bottom: 10px;
-    padding: 5px;
-}
-
-.deleteBtn {
-    background: blue;
-    color: aliceblue;
-    border: none;
-    border-radius: 4px;
-    padding: 4px;
+.successMsg {
+  color: green;
+  background: lightgray;
+  font-size: 15px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
