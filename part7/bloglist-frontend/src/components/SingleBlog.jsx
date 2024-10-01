@@ -34,6 +34,14 @@ const SingleBlog = () => {
           </div>
           <div>added by {blog.author}</div>
         </div>
+        <div>
+          <h3>Comments</h3>
+          {blog.comments.map((c) => (
+            <ul key={c}>
+              <li>{c}</li>
+            </ul>
+          ))}
+        </div>
       </div>
     </div>
   )

@@ -11,6 +11,21 @@ blogsRouter.get("/", async (req, res) => {
   res.json(blogs.map((blog) => blog.toJSON()))
 })
 
+blogsRouter.post("/:id/comments", async (req, res) => {
+  const { id } = req.params
+  const { comment } = req.body
+
+  const blog = await Blog.findById(id)
+  if (!blog) {
+    return res.status(404).json({ error: "Blog not found" })
+  }
+
+  blog.comments = blog.comments.concat(comment) 
+  const updatedBlog = await blog.save()
+
+  res.status(201).json(updatedBlog)
+})
+
 blogsRouter.post("/", async (req, res, next) => {
   const body = req.body
   const user = req.user
