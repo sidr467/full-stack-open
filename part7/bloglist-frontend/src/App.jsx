@@ -12,6 +12,7 @@ import UserList from "./components/UserList"
 import { initialUsers } from "./reducers/usersReducer"
 import SingleUser from "./components/SingleUser"
 import SingleBlog from "./components/SingleBlog"
+import { Link } from "react-router-dom"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -55,6 +56,11 @@ const App = () => {
 
   return (
     <Router>
+      <div>
+        <Link to="/">Blogs</Link>
+        <span> </span>
+        <Link to="/users">Users</Link>
+      </div>
       <div>
         {user === null ? (
           <LoginForm
