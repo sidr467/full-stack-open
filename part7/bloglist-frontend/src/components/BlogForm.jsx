@@ -3,6 +3,8 @@ import PropTypes from "prop-types"
 import { useDispatch } from "react-redux"
 import { showNotification } from "../reducers/notificationReducer"
 import { createBlog } from "../reducers/blogsReducer"
+import FloatingLabel from "react-bootstrap/FloatingLabel"
+import Form from "react-bootstrap/Form"
 
 const BlogForm = ({ user }) => {
   const [title, setTitle] = useState("")
@@ -30,31 +32,33 @@ const BlogForm = ({ user }) => {
     <form action="" onSubmit={handleCreateBlog}>
       <h2>create new blog</h2>
       <div>
-        <label htmlFor="title">Title : </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="author">Author : </label>
-        <input
-          type="text"
-          id="author"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="url">Url : </label>
-        <input
-          type="text"
-          id="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-        />
+        <FloatingLabel label="Title" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Blog Title"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="Author" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Blog Author"
+            id="author"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+          />
+        </FloatingLabel>
+        <FloatingLabel label="URL" className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Blog URL"
+            id="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+        </FloatingLabel>
       </div>
       <button type="submit">Create</button>
     </form>

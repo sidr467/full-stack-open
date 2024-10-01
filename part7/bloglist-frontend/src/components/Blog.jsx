@@ -3,14 +3,14 @@ import { Link } from "react-router-dom"
 
 const Blog = ({ blog }) => {
   return (
-    <div className="blogstyle">
-      <div className="blogAuthorTitle">
-        <span className="title">
-          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-        </span>{" "}
-        -- <span className="author">{blog.author}</span>
-      </div>
-    </div>
+    <tr>
+      <td>
+        <Link style={{ textDecoration: "none" }} to={`/blogs/${blog.id}`}>
+          {blog.title}
+        </Link>
+      </td>
+      <td>{blog.author}</td>
+    </tr>
   )
 }
 

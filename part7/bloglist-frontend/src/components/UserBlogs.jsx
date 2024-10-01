@@ -3,6 +3,7 @@ import Togglable from "./Togglable"
 import BlogForm from "./BlogForm"
 import PropTypes from "prop-types"
 import Notification from "./Notification"
+import Table from "react-bootstrap/Table"
 
 const UserBlogs = ({ user, handleLogout, blogs }) => {
   const style = {
@@ -29,9 +30,19 @@ const UserBlogs = ({ user, handleLogout, blogs }) => {
         </Togglable>
         <br />
       </div>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} blogs={blogs} user={user} />
-      ))}
+      <Table striped bordered>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} blogs={blogs} user={user} />
+          ))}
+        </tbody>
+      </Table>
     </div>
   )
 }
