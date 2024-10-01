@@ -2,6 +2,7 @@ import { useState } from "react"
 import PropTypes from "prop-types"
 import { useDispatch } from "react-redux"
 import { likeBlog, removeBlog } from "../reducers/blogsReducer"
+import { Link } from "react-router-dom"
 
 const Blog = ({ blog, user }) => {
   const [blogDataVisible, setDataBlogVisible] = useState(false)
@@ -35,8 +36,10 @@ const Blog = ({ blog, user }) => {
     <div className="blogstyle">
       {!blogDataVisible ? (
         <div className="blogAuthorTitle">
-          <span className="title">{blog.title}</span> --{" "}
-          <span className="author">{blog.author}</span>
+          <span className="title">
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </span>{" "}
+          -- <span className="author">{blog.author}</span>
           <button className="view" onClick={() => setDataBlogVisible(true)}>
             View
           </button>
@@ -44,11 +47,13 @@ const Blog = ({ blog, user }) => {
       ) : (
         <div className="blogDetails">
           <div>
-            <span className="title">{blog.title}</span> --{" "}
-            <span className="author">{blog.author}</span>
+            <span className="title">
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            </span>{" "}
+            -- <span className="author">{blog.author}</span>
             <button onClick={() => setDataBlogVisible(false)}>hide</button>
           </div>
-          <a href="">{blog.url}</a>
+          <a href="https://en.wikipedia.org/wiki/Ikigai">{blog.url}</a>
           <div>
             <span className="likes">{blog.likes}</span>{" "}
             <button className="likeBtn" onClick={handleUpdate}>

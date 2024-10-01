@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import UserList from "./components/UserList"
 import { initialUsers } from "./reducers/usersReducer"
 import SingleUser from "./components/SingleUser"
+import SingleBlog from "./components/SingleBlog"
 
 const App = () => {
   const [username, setUsername] = useState("")
@@ -67,6 +68,7 @@ const App = () => {
           <Routes>
             <Route path="/users" element={<UserList />}></Route>
             <Route path="/users/:id" element={<SingleUser />}></Route>
+            <Route path="/blogs/:id" element={<SingleBlog />}></Route>
             <Route
               path="/"
               element={
