@@ -1,15 +1,15 @@
 import { useMutation, useQuery } from "@apollo/client"
 import { ALL_AUTHORS, EDIT_BORNYEAR } from "../queries"
 import { useState } from "react"
+import Select from "react-select"
 
 const Authors = (props) => {
-  const [name, setName] = useState("")
+  const [author, setAuthor] = useState(null)
   const [born, setBorn] = useState("")
 
   const result = useQuery(ALL_AUTHORS, {
     pollInterval: 2000,
   })
-
   const [editAuthor] = useMutation(EDIT_BORNYEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
   })
@@ -27,16 +27,21 @@ const Authors = (props) => {
 
     editAuthor({
       variables: {
-        name,
+        name: author.value,
         setToBorn: parseInt(born),
       },
     })
 
-    setName("")
+    setAuthor(null)
     setBorn("")
   }
 
   const authors = result.data.allAuthors
+  const auhtorlist = authors.map((a) => ({
+    value: a.name,
+    label: a.name,
+  }))
+  console.log(auhtorlist)
 
   return (
     <div>
@@ -62,12 +67,14 @@ const Authors = (props) => {
       <br />
       <form action="" onSubmit={editBornYear}>
         <div>
-          Name{" "}
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          Auhtor Name{" "}
+          <Select
+            options={auhtorlist}
+            value={author}
+            onChange={setAuthor}
+            isClearable
+            required
+          ></Select>
         </div>
         <div>
           Born Year{" "}
