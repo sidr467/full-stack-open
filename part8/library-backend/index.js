@@ -115,10 +115,6 @@ let books = [
   },
 ]
 
-/*
-  you can remove the placeholder query once your first one has been implemented 
-*/
-
 const typeDefs = `
   type Book {
     title: String!,
@@ -162,37 +158,60 @@ const resolvers = {
     authorCount: async () => Author.collection.countDocuments(),
     booksCount: async () => Book.collection.countDocuments(),
     allBooks: async (root, args) => {
-      return await Book.find({})
+      const query = {}
+
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+        if (author) {
+          query.author = author._id
+        } else {
+          return []
+        }
+      }
+
+      if (args.genre) {
+        query.genres = { $in: [args.genre] }
+      }
+
+      return await Book.find(query).populate("author")
     },
     allAuthors: async () => {
       return await Author.find({})
     },
   },
   Author: {
-    bookCount: (root) => {
-      return books.filter((book) => book.author === root.name).length
+    bookCount: async (root) => {
+      return await Book.countDocuments({ author: root._id })
     },
   },
   Mutation: {
-    addBook: (root, args) => {
-      let author = authors.find((a) => a.name === args.author)
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        author = { name: args.author, id: uuid() }
-        authors = authors.concat(author)
+        author = new Author({ name: args.author })
+        await author.save()
       }
-      const book = { ...args, id: uuid() }
-      books = books.concat(book)
-      return book
+
+      const book = new Book({
+        title: args.title,
+        published: args.published,
+        genres: args.genres,
+        author: author._id,
+      })
+
+      await book.save()
+      return book.populate("author")
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((a) => a.name === args.name)
-
+    editAuthor: async (root, args) => {
+      const author = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setToBorn },
+        { new: true }
+      )
       if (!author) {
-        return null
+        throw new GraphQLError("Author not found")
       }
-
-      author.born = args.setToBorn
       return author
     },
   },
