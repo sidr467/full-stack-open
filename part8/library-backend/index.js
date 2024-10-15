@@ -3,11 +3,31 @@ const { startStandaloneServer } = require("@apollo/server/standalone")
 const { v1: uuid } = require("uuid")
 const { GraphQLError } = require("graphql")
 
+const mongoose = require("mongoose")
+mongoose.set("strictQuery", false)
+const Book = require("./models/book")
+const Author = require("./models/author")
+
+require("dotenv").config()
+
+const MONGODB_URI = process.env.MONGODB_URI
+
+console.log("connecting to", MONGODB_URI)
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log("Connected to MongoDB")
+  })
+  .catch((error) => {
+    console.log("Error connection to MongoDB:", error.message)
+  })
+
 let authors = [
   {
     name: "Robert Martin",
-    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
     born: 1952,
+    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
   },
   {
     name: "Martin Fowler",
@@ -103,9 +123,9 @@ const typeDefs = `
   type Book {
     title: String!,
     published: Int!,
-    author: String!,
-    id: ID!,
+    author: Author!,
     genres: [String!]!, 
+    id: ID!,
   }
 
   type Author {
@@ -139,25 +159,14 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    authorCount: () => authors.length,
-    booksCount: () => books.length,
-    allBooks: (root, args) => {
-      let filteredBooks = books
-
-      if (args.author) {
-        filteredBooks = filteredBooks.filter(
-          (book) => book.author === args.author
-        )
-      }
-
-      if (args.genre) {
-        filteredBooks = filteredBooks.filter((book) =>
-          book.genres.includes(args.genre)
-        )
-      }
-      return filteredBooks
+    authorCount: async () => Author.collection.countDocuments(),
+    booksCount: async () => Book.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      return await Book.find({})
     },
-    allAuthors: () => authors,
+    allAuthors: async () => {
+      return await Author.find({})
+    },
   },
   Author: {
     bookCount: (root) => {
