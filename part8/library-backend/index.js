@@ -1,6 +1,5 @@
 const { ApolloServer } = require("@apollo/server")
 const { startStandaloneServer } = require("@apollo/server/standalone")
-const { v1: uuid } = require("uuid")
 const { GraphQLError } = require("graphql")
 
 const mongoose = require("mongoose")
@@ -186,33 +185,51 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      let author = await Author.findOne({ name: args.author })
+      try {
+        let author = await Author.findOne({ name: args.author })
 
-      if (!author) {
-        author = new Author({ name: args.author })
-        await author.save()
+        if (!author) {
+          author = new Author({ name: args.author })
+          await author.save()
+        }
+
+        const book = new Book({
+          title: args.title,
+          published: args.published,
+          genres: args.genres,
+          author: author._id,
+        })
+
+        await book.save()
+        return book.populate("author")
+      } catch (error) {
+        throw new GraphQLError("Error adding book: " + error.message, {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args,
+          },
+        })
       }
-
-      const book = new Book({
-        title: args.title,
-        published: args.published,
-        genres: args.genres,
-        author: author._id,
-      })
-
-      await book.save()
-      return book.populate("author")
     },
     editAuthor: async (root, args) => {
-      const author = await Author.findOneAndUpdate(
-        { name: args.name },
-        { born: args.setToBorn },
-        { new: true }
-      )
-      if (!author) {
-        throw new GraphQLError("Author not found")
+      try {
+        const author = await Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setToBorn },
+          { new: true }
+        )
+        if (!author) {
+          throw new GraphQLError("Author not found")
+        }
+        return author
+      } catch (error) {
+        throw new GraphQLError("Error editing author: " + error.message, {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args,
+          },
+        })
       }
-      return author
     },
   },
 }
