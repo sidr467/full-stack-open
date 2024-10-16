@@ -1,11 +1,13 @@
 const { ApolloServer } = require("@apollo/server")
 const { startStandaloneServer } = require("@apollo/server/standalone")
 const { GraphQLError } = require("graphql")
+const jwt = require("jsonwebtoken")
 
 const mongoose = require("mongoose")
 mongoose.set("strictQuery", false)
 const Book = require("./models/book")
 const Author = require("./models/author")
+const Luser = require("./models/user")
 
 require("dotenv").config()
 
@@ -115,6 +117,16 @@ let books = [
 ]
 
 const typeDefs = `
+type User {
+  username: String!
+  favoriteGenre: String!
+  id: ID!
+}
+
+type Token {
+  value: String!
+}
+
   type Book {
     title: String!,
     published: Int!,
@@ -135,6 +147,7 @@ const typeDefs = `
     booksCount : Int!
     allBooks(author:String,genre:String) : [Book!]!
     allAuthors : [Author]!
+    me:User
   }
 
   type Mutation {
@@ -149,6 +162,16 @@ const typeDefs = `
         name:String!,
         setToBorn:Int!
     ):Author
+
+     createUser(
+    username: String!
+    favoriteGenre: String!
+  ): User
+
+  login(
+    username: String!
+    password: String!
+  ): Token
   }
 `
 
@@ -176,6 +199,9 @@ const resolvers = {
     },
     allAuthors: async () => {
       return await Author.find({})
+    },
+    me: (root, args, context) => {
+      return context.currentUser
     },
   },
   Author: {
@@ -231,6 +257,44 @@ const resolvers = {
         })
       }
     },
+    createUser: async (root, args) => {
+      const user = new Luser({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      })
+
+      try {
+        await user.save()
+        return user
+      } catch (error) {
+        throw new GraphQLError("error creating user", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.username,
+            error,
+          },
+        })
+      }
+    },
+
+    login: async (root, args) => {
+      const user = await Luser.findOne({ username: args.username })
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError("wrong credentials", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        })
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      }
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+    },
   },
 }
 
@@ -241,6 +305,24 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req }) => {
+    const auth = req ? req.headers.authorization : null
+    console.log("Authorization header:", auth) // Log the auth header
+    if (auth && auth.startsWith("Bearer ")) {
+      try {
+        const decodedToken = jwt.verify(
+          auth.substring(7),
+          process.env.JWT_SECRET
+        )
+        console.log("Decoded Token:", decodedToken) // Log the decoded token
+        const currentUser = await Luser.findById(decodedToken.id)
+        console.log("Current User:", currentUser) // Log the current user
+        return { currentUser }
+      } catch (error) {
+        console.error("Token verification error:", error) // Log any errors
+      }
+    }
+  },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`)
 })
