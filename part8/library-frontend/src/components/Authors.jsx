@@ -41,7 +41,7 @@ const Authors = (props) => {
     value: a.name,
     label: a.name,
   }))
-  console.log(auhtorlist)
+  // console.log(auhtorlist)
 
   return (
     <div>
