@@ -46,18 +46,24 @@ const Books = (props) => {
       <br />
       <br />
 
-      <table border={1}>
+      <table
+        border={1}
+        style={{
+          borderStyle: "solid",
+          borderCollapse: "collapse",
+        }}
+      >
         <tbody>
-          <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
+          <tr style={{ padding: 5 }}>
+            <th style={{ padding: 5 }}></th>
+            <th style={{ padding: 5 }}>author</th>
+            <th style={{ padding: 5 }}>published</th>
           </tr>
           {filteredBooks.map((a) => (
             <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
+              <td style={{ padding: 5 }}>{a.title}</td>
+              <td style={{ padding: 5 }}>{a.author.name}</td>
+              <td style={{ padding: 5 }}>{a.published}</td>
             </tr>
           ))}
         </tbody>
